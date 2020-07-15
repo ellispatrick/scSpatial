@@ -1,5 +1,5 @@
 ${authorname}${biosystem}Data <- function(...) {
     version <- \"${current_version}\"
-    sce <- .create_sce(file.path(\"${authorname}-${biosystem}\", version), has.rowdata=FALSE, suffix=which)
+    sce <- .create_se(file.path(\"${authorname}-${biosystem}\", version), has.rowdata=FALSE, suffix=which)
     sce
 }
