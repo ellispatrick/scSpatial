@@ -8,6 +8,15 @@ Authors@R:
            email = "celsom@maths.usyd.edu.au")
 Description: Single cell imaging for publicly available imaging data, provided as CytoImageList and
     SingleCellExperiment objects.
+Depends:
+    CytoImageList
+    SingleCellExperiment
+Imports:
+    ExperimentHub
+biocViews:
+    ExperimentHub,
+    ExperimentData, 
+    ExpressionData
 License: `use_mit_license()`
 Encoding: UTF-8
 LazyData: true
