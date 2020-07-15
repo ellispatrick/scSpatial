@@ -1,10 +1,98 @@
 ---
 title: Processing the Jackson BreastCancer dataset
 author: Celso Milne
-date: Wed Jul 15 11:52:07 AEST 2020
+date: Wed Jul 15 13:04:23 AEST 2020
 output:
   BiocStyle::html_document:
     titlecaps: false
     toc_float: true
 bibliography: ref.bib
 ---
+
+```{r style, echo=FALSE, results='hide', message=FALSE}
+library(BiocStyle)
+knitr::opts_chunk$set(error=FALSE, message=FALSE, warning=FALSE)
+```
+
+# Downloading the Data
+
+First, we download the data from Zonendo.
+
+```{r}
+library(BiocFileCache)
+bfc <- BiocFileCache("raw_data", ask=FALSE)
+ome.url <- "https://zenodo.org/record/3518284/files/OMEandSingleCellMasks.zip?download=1"
+sc.url <- "https://zenodo.org/record/3518284/files/SingleCell_and_Metadata.zip?download=1"
+
+omenmasks <- bfcrpath(bfc, ome.url)
+sc_data <- bfcrpath(bfc, sc.url)
+```
+
+Now unpack it into a temporary file.
+
+```{r}
+temp <- tempfile()
+unzip(omenmasks, temp)
+unzip(sc_data, temp)
+
+STAINING_PATH <- file.path(temp, "Data_publication", "Basel_Zuri_StainingPanel.csv")
+SC_PATH <- file.path(temp, "Data_publication", "BaselTMA", "SC_dat.csv")
+OME_PATH <- file.path(temp, "OMEnMasks", "ome")
+MASK_PATH <- file.path(temp, "OMEnMasks", "Basel_Zuri_masks")
+```
+
+# Reading in the TIFF data
+
+First, we read in the staining panel - markers for each TIFF channel. Then we get the names of each channel as a 52-element named vector.
+
+```{r}
+# Get the staining panel
+staining_panel <- read_csv(STAINING_PATH)
+staining_panel$FullStack = factor(staining_panel$FullStack)
+staining_panel <- staining_panel[!is.na(staining_panel$FullStack),]
+
+# Set the channel names (we know there are 52 of them)
+channels = 1:52
+names(channels)[staining_panel$FullStack] = staining_panel$Target
+names(channels) <- sub("[.]", "_", make.names(names(channels), unique=T))
+```
+
+Now we can load the images, and set the channel names. We only fetch a subset of the images, as there are too many to practically use all at once. We can also fetch the cell masks for these images.
+
+```{r}
+# Pattern to fetch images on
+PATTERN <- "BaselTMA_SP42_.*"
+
+# Get the images (but not all of them - there are too many)
+images <- loadImages(OME_PATH, pattern=PATTERN)
+channelNames(images) <- names(channels)
+
+# Get the masks
+masks <- loadImages(MASK_PATH, pattern=PATTERN)
+```
+
+# Reading in the Single Cell Data
+
+Now, we read in the Single Cell data provided by Jackson. We keep only rows for single cells in the images that we've already fetched.
+
+```{r}
+scDat <- read_csv(SC_PATH)
+scDat <- scDat[grepl(PATTERN, scDat$core),]
+```
+
+# Save to `ExperimentHub` Storage
+
+Prepare all the files for storage on the `ExperimentHub`.
+
+```{r}
+path <- file.path("scCyto", "Jackson-BreastCancer", "0.0")
+dir.create(path, showWarnings=FALSE, recursive=TRUE)
+
+saveRDS(images, file=file.path(path, "images.rds"))
+saveRDS(masks, file=file.path(path, "masks.rds"))
+saveRDS(scData, file=file.path(path, "singleCellData.rds"))
+```
+
+
+
+
