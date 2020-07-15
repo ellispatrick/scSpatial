@@ -1,0 +1,10 @@
+---
+title: Processing the Jackson BreastCancer dataset
+author: Celso Milne
+date: Wed Jul 15 11:52:07 AEST 2020
+output:
+  BiocStyle::html_document:
+    titlecaps: false
+    toc_float: true
+bibliography: ref.bib
+---

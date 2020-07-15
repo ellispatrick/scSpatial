@@ -1,0 +1,9 @@
+FUN <- function(...) {
+    data.frame(
+        ...
+    )
+}
+
+write.csv(file=\"../extdata/metadata-${authorname}-${biosystem}.csv\",
+    rbind(FUN(...), FUN(...)),
+    row.names=FALSE)
