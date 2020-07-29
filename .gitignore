@@ -2,3 +2,4 @@
 *.Rproj
 .Rhistory
 *raw_data*
+*temp*

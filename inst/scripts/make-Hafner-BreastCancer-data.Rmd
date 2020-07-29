@@ -1,0 +1,77 @@
+---
+title: Processing the Hafner BreastCancer dataset
+author: Celso Milne
+date: Wed Jul 29 16:05:58 AEST 2020
+output:
+  BiocStyle::html_document:
+    titlecaps: false
+    toc_float: true
+bibliography: ref.bib
+---
+
+```{r style, echo=FALSE, results='hide', message=FALSE}
+library(BiocStyle)
+knitr::opts_chunk$set(error=FALSE, message=FALSE, warning=FALSE)
+```
+
+# Downloading the Data
+
+First, we download the data from Zonendo.
+
+```{r}
+library(BiocFileCache)
+bfc <- BiocFileCache("raw_data", ask=FALSE)
+data.url <- "http://lincs.hms.harvard.edu/data/HMS_Dataset_20267.zip"
+
+data.path <- bfcrpath(bfc, data.url)
+```
+
+Now read it into our session.
+
+```{r}
+library(tidyverse)
+
+temp <- file.path("temp/")
+dir.create(temp, recursive = T)
+unzip(data.path, exdir=temp)
+
+csv_file <- file.path(temp, "HMS_Dataset_20267", "HMS_Dataset_20267_data_file.csv")
+data <- read_csv(csv_file)
+```
+
+And get rid of the temporary folder.
+
+```{r}
+unlink(temp, recursive = T, force = T)
+```
+
+Now, we want to clean the data up a bit.
+
+```{r}
+data <- data %>% 
+  dplyr::rename(x="X", y="Y", 
+                shape_area="Area", 
+                shape_perimiter="Perim", 
+                shape_circularity="Circ", 
+                cellID="Cell_No",
+                imageID="Image_link") %>%
+  select(-Well, -Treatment, -Dose, -`Dose unit`, -`Duration (hr)`, -Row, 
+         -Column, -Field)
+
+intensity_columns <- colnames(data)[grep("[A-Za-z]+[0-9]*_[0-9]+|IntDen_DAPI", colnames(data))]
+
+# Rename the intensity columns (for easier processing in Segmented cells)
+data <- data %>% 
+  rename_at(intensity_columns, function(x){paste0("intensity_", x)})
+```
+
+# Save to `ExperimentHub` Storage
+
+Prepare all the files for storage on the `ExperimentHub`.
+
+```{r}
+path <- file.path("scCyto", "Hafner-BreastCancer", "1.0")
+dir.create(path, showWarnings=FALSE, recursive=TRUE)
+
+saveRDS(data, file=file.path(path, "spatialCellData.rds"))
+```
