@@ -29,6 +29,7 @@ data.path <- bfcrpath(bfc, data.url)
 Now read it into our session.
 
 ```{r}
+library(tidyverse)
 data <- read_csv(data.path)
 ```
 
