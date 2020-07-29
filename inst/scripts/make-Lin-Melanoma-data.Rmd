@@ -16,7 +16,7 @@ knitr::opts_chunk$set(error=FALSE, message=FALSE, warning=FALSE)
 
 # Downloading the Data
 
-First, we download the data from Zonendo.
+First, we download the data from Harvard
 
 ```{r}
 library(BiocFileCache)
