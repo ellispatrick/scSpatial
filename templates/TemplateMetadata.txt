@@ -9,18 +9,18 @@ FUN <- function(...) {
         BiocVersion=\"3.11\",
         Maintainer=NA,
         Genome=NA,
-        SourceType="CSV",
+        SourceType=\"CSV\",
         SourceUrl=NA,
         SourceVersion=NA,
-        RDataPath=file.path(\"scCyto\", \"${authorname}-${biosystem}",
-                            \"${version}\", "singleCellData.rds"),
+        RDataPath=file.path\(\"scCyto\", \"${authorname}-${biosystem}\",
+                            \"${version}\", \"singleCellData.rds\"\),
         TaxonomyId=\"NA\",
         Coordinate_1_based=T,
-        Species="Homo sapiens",
-        DataProvider="",
-        RDataClass="data.frame",
-        DispatchClass="Rds",
-        biocViews="NA"
+        Species= # Usually just Homo sapiens,
+        DataProvider= # URL,
+        RDataClass=\"data.frame\",
+        DispatchClass=\"Rds\",
+        biocViews=\"NA\"
     )
 }
 
