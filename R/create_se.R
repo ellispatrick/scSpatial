@@ -1,14 +1,10 @@
 #' @importFrom ExperimentHub ExperimentHub
-#' @importFrom SingleCellExperiment SingleCellExperiment
-#' @importFrom cytomapper CytoImageList
 #' @importFrom spicyR SegmentedCells
-.create_se <- function(dataset, hub=ExperimentHub(), pattern=NULL) {
+.create_se <- function(dataset, hub=ExperimentHub(), ...) {
 
   host <- file.path("scCyto", dataset)
+  single_cell_path <- file.path(host, "spatialCellData.rds")
 
-  # 1. Get the SingleCellExperiment, if it exists
-
-  # 2. Get the CytoImageList
-
-  # 3. Get the Segmented Cell Mask
+  cellData <- read_rds(single_cell_path)
+  SegmentedCells(cellData, ...)
 }
