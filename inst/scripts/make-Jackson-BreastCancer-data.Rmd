@@ -46,6 +46,8 @@ MASK_PATH <- file.path(temp, "OMEnMasks", "Basel_Zuri_masks")
 First, we read in the staining panel - markers for each TIFF channel. Then we get the names of each channel as a 52-element named vector.
 
 ```{r}
+library(tidyverse)
+
 # Get the staining panel
 staining_panel <- read_csv(STAINING_PATH)
 staining_panel$FullStack = factor(staining_panel$FullStack)
@@ -54,7 +56,7 @@ staining_panel <- staining_panel[!is.na(staining_panel$FullStack),]
 # Set the channel names (we know there are 52 of them)
 channels = 1:52
 names(channels)[staining_panel$FullStack] = staining_panel$Target
-names(channels) <- sub("[.]", "_", make.names(names(channels), unique=T))
+names(channels) <- sub("[\\.]", "_", make.names(names(channels), unique=T))
 ```
 
 Now we can load the images, and set the channel names. We only fetch a subset of the images, as there are too many to practically use all at once. We can also fetch the cell masks for these images.
@@ -77,20 +79,24 @@ Now, we read in the Single Cell data provided by Jackson. We keep only rows for 
 
 ```{r}
 scDat <- read_csv(SC_PATH)
-scDat <- scDat[grepl(PATTERN, scDat$core),]
 ```
+
+## Structuring the Single Cell Data
+
+TODO
+
 
 # Save to `ExperimentHub` Storage
 
 Prepare all the files for storage on the `ExperimentHub`.
 
 ```{r}
-path <- file.path("scCyto", "Jackson-BreastCancer", "0.0")
+path <- file.path("scCyto", "Jackson-BreastCancer", "1.0")
 dir.create(path, showWarnings=FALSE, recursive=TRUE)
 
 saveRDS(images, file=file.path(path, "images.rds"))
 saveRDS(masks, file=file.path(path, "masks.rds"))
-saveRDS(scData, file=file.path(path, "singleCellData.rds"))
+saveRDS(scData, file=file.path(path, "spatialCellData.rds"))
 ```
 
 
