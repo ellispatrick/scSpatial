@@ -3,7 +3,7 @@ LinMelanomaData <- function(...) {
     sc <- .create_se(file.path("Lin-Melanoma", version),
                      spatialCoords = c("x", "y"),
                      intensityString="protein_",
-                     morphologyString=c("area", "perimiter", "circularity"),
+                     morphologyString="shape_",
                      cellIDString="cellID",
                      imageIDString="imageID")
     sc
