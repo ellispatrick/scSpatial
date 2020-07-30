@@ -8,3 +8,57 @@ output:
     toc_float: true
 bibliography: ref.bib
 ---
+
+```{r style, echo=FALSE, results=\"hide\", message=FALSE}
+library(BiocStyle)
+knitr::opts_chunk$set(error=FALSE, message=FALSE, warning=FALSE)
+```
+
+# Downloading the Data
+
+First, we download the data from Mendeley.
+
+```{r}
+library(BiocFileCache)
+
+biocache <- \"raw_data\"
+bfc <- BiocFileCache(biocache, ask=FALSE)
+
+all.urls <- c(NA)
+
+data.path <- bfcrpath(bfc, all.urls)
+```
+
+Now read it into our session.
+
+```{r}
+library(tidyverse)
+
+temp <- file.path(\"temp/\")
+dir.create(temp, recursive = T)
+lapply(data.path, FUN=unzip, exdir=temp)
+
+```
+
+And get rid of the temporary folder and the cache.
+
+```{r}
+unlink(temp, recursive = T, force = T)
+unlink(biocache, recursive = T, force = T)
+```
+
+Now, we want to clean the data up a bit.
+
+```{r}
+```
+
+# Save to `ExperimentHub` Storage
+
+Prepare all the files for storage on the `ExperimentHub`.
+
+```{r}
+path <- file.path(\"scCyto\", \"${authorname}-${biosystem}\", \"1.0\")
+dir.create(path, showWarnings=FALSE, recursive=TRUE)
+
+saveRDS(data, file=file.path(path, \"spatialCellData.rds\"))
+```
