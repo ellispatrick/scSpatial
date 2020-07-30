@@ -1,9 +1,29 @@
 FUN <- function(...) {
+
+    # FOR INFORMATION ON WHAT SHOULD BE INCLUED IN THIS FILE, TYPE
+    # ?ExperimentHubData::makeExperimentHubMetadata
+
     data.frame(
-        ...
+        Title=\"${authorname} ${biosystem}\",
+        Description= NA,
+        BiocVersion=\"3.11\",
+        Maintainer=\"${authorname} <EMAIL>\",
+        Genome=NA,
+        SourceType=\"CSV\",
+        SourceUrl=NA,
+        SourceVersion=NA,
+        RDataPath=file.path(\"scCyto\", \"${authorname}-${biosystem}\",
+                            \"${current_version}\", \"singleCellData.rds\"),
+        TaxonomyId=\"NA\",
+        Coordinate_1_based=T,
+        Species= \"Homo sapiens\",
+        DataProvider= # URL,
+        RDataClass=\"data.frame\",
+        DispatchClass=\"Rds\",
+        biocViews=\"NA\"
     )
 }
 
 write.csv(file=\"../extdata/metadata-${authorname}-${biosystem}.csv\",
-    rbind(FUN(...), FUN(...)),
+    FUN(),
     row.names=FALSE)

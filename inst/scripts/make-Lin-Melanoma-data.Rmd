@@ -1,0 +1,83 @@
+---
+title: Processing the Lin Melanoma dataset
+author: Celso Milne
+date: Wed Jul 29 11:06:16 AEST 2020
+output:
+  BiocStyle::html_document:
+    titlecaps: false
+    toc_float: true
+bibliography: ref.bib
+---
+
+```{r style, echo=FALSE, results='hide', message=FALSE}
+library(BiocStyle)
+knitr::opts_chunk$set(error=FALSE, message=FALSE, warning=FALSE)
+```
+
+# Downloading the Data
+
+First, we download the data from Harvard
+
+```{r}
+library(BiocFileCache)
+bfc <- BiocFileCache("raw_data", ask=FALSE)
+data.url <- "http://lincs.hms.harvard.edu/db/datasets/20236/results?search=&output_type=.csv"
+
+data.path <- bfcrpath(bfc, data.url)
+```
+
+Now read it into our session.
+
+```{r}
+library(tidyverse)
+data <- read_csv(data.path)
+```
+
+Now, we want to clean the data up a bit.
+
+```{r}
+data <- data %>%
+  rename(cellID="Cell ID Number",
+         imageID="Raw Image",
+         x="X-coordinate", 
+         y="Y-coordinate",
+         small_mol_name="Small Molecule Name", 
+         small_mol_conc="Small Mol Concentration",
+         conc_unit="Small Mol Conc Unit",
+         cycif_round="CycIF Round", 
+         primary_antibody="Primary Antibody Name",
+         secondary_antibody="Secondary Antibody Name",
+         cytell_filter="Cytell filter",
+         protein="Protein Detected Name",
+         other_detected="Other Reagent Detected Name",
+         intensity="Measured Fluorescence Intensity (a.u.)",
+         well="Well",
+         field="Field",
+         shape_area="Cell Area (um^2)",
+         shape_perimiter="Cell Perimeter (um)",
+         shape_circularity="Cell Circularity") %>%
+  select(-"Registered Image", -"Cell Name", -"Well_1") %>%
+  select(!matches(".*(LINCS|Timepoint).*")) %>%
+  mutate(cellID=factor(paste(imageID, cellID, sep="_")),
+         imageID=factor(imageID),
+         protein=str_replace(protein, " ", "_"),
+         small_mol_name=factor(small_mol_name),
+         conc_unit=factor(conc_unit),
+         primary_antibody=factor(primary_antibody),
+         secondary_antibody=factor(secondary_antibody),
+         cytell_filter=factor(cytell_filter),
+         other_detected=factor(other_detected),
+         cycif_round=factor(cycif_round),) %>%
+  spread(protein, intensity, sep="_")
+```
+
+# Save to `ExperimentHub` Storage
+
+Prepare all the files for storage on the `ExperimentHub`.
+
+```{r}
+path <- file.path("scCyto", "Lin-Melanoma", "1.0")
+dir.create(path, showWarnings=FALSE, recursive=TRUE)
+
+saveRDS(data, file=file.path(path, "spatialCellData.rds"))
+```

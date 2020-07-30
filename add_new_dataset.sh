@@ -1,6 +1,6 @@
 authorname=$1
 biosystem=$2
-current_version=0.0
+current_version=$3
 
 RmdReport="./inst/scripts/make-$authorname-$biosystem-data.Rmd"
 metadataScript="./inst/scripts/make-$authorname-$biosystem-metadata.R"
