@@ -1,8 +1,8 @@
 # scSpatial
-Tool for accessing pre-processed IMC and Opal images with single-cell RNAseq data.
+Tool for accessing curated pre-processed segmented spatial cytometry datasets. These data measure the spatial coordinates of single cells and will likely have corresponding protein/rna abundances, morphology measurements and cell masks. Relevent technologies include IMC, CODEX, seqFISH and CycIF.
 
 ## Uploading Data
-New data is gradually being added. Our goal is to make this library the standard for accessing high-quality, single-cell spatial data. If you have a dataset that you want to add, it must be publicly available (i.e. on Mendeley). Then, fork the github repository and create a new branch:
+New data is gradually being added. Our goal is to make this library the standard for accessing high-quality, spatially oriented single-cell data. If you have a dataset that you want to add, it must be publicly available (i.e. on Mendeley). Then, fork the github repository and create a new branch:
 
 ```shell
 git clone https://github.com/<github_username>/scSpatial
